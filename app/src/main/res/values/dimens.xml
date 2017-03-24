@@ -15,8 +15,7 @@
     limitations under the License.
 -->
 <resources>
-    <dimen name="text_explanation">20dp</dimen>
-    <dimen name="text_word">30dp</dimen>
+    <dimen name="text_explanation">22dp</dimen>
+    <dimen name="text_word">36dp</dimen>
     <dimen name="padding">16dp</dimen>
-    <dimen name="root_padding">40dp</dimen>
 </resources>

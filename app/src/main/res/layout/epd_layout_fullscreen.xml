@@ -37,7 +37,5 @@
         android:id="@+id/text_explanation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/padding"
-        android:layout_marginStart="@dimen/padding"
         android:textSize="@dimen/text_explanation"/>
 </LinearLayout>
