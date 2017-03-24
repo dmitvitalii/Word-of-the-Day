@@ -44,6 +44,7 @@ public class WordService extends IntentService {
     private String[] mWords;
     private ComponentName mWidgetComponentName;
     private String[] mExplanations;
+    private AppWidgetManager mWidgetManager;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -58,12 +59,11 @@ public class WordService extends IntentService {
      * must be black or white, depending on which theme was chosen in YotaHub.
      * Uses statically imported constants from SDK.
      *
-     * @param manager {@link AppWidgetManager}, needed to get widget options.
-     * @param id      an id of current widget.
      * @return required color.
      */
-    private static int getActiveElementColor(AppWidgetManager manager, int id) {
-        boolean isWhiteTheme = manager.getAppWidgetOptions(id)
+    private int getActiveElementColor() {
+        int id = mWidgetManager.getAppWidgetIds(mWidgetComponentName)[0];
+        boolean isWhiteTheme = mWidgetManager.getAppWidgetOptions(id)
                 .getInt(OPTION_WIDGET_THEME, WIDGET_THEME_BLACK) == WIDGET_THEME_WHITE;
         return isWhiteTheme ? Color.BLACK : Color.WHITE;
     }
@@ -76,6 +76,7 @@ public class WordService extends IntentService {
     @Override
     public void onCreate() {
         super.onCreate();
+        mWidgetManager = AppWidgetManager.getInstance(this);
         Resources resources = getResources();
         mWords = resources.getStringArray(R.array.words);
         mExplanations = resources.getStringArray(R.array.meanings);
@@ -97,13 +98,15 @@ public class WordService extends IntentService {
         String action = null == intent ? "" : intent.getAction();
         if (NEXT_WORD.equals(action)) {
             RemoteViews widget = new RemoteViews(getPackageName(), R.layout.epd_layout_fullscreen);
-            int id = getId();
-            if (mWords.length >= id) {
-                id = FIRST;
+            int stringId = getId();
+            if (mWords.length >= stringId) {
+                stringId = FIRST;
             }
-            saveNextId(id);
-            widget.setTextViewText(R.id.text_word, mWords[id]);
-            widget.setTextViewText(R.id.text_explanation, mExplanations[id]);
+            saveNextId(stringId);
+            widget.setTextViewText(R.id.text_word, mWords[stringId]);
+            widget.setTextColor(R.id.text_word, getActiveElementColor());
+            widget.setTextViewText(R.id.text_explanation, mExplanations[stringId]);
+            widget.setTextColor(R.id.text_explanation, getActiveElementColor());
             updateWidget(widget);
         } else if (getId() == FIRST) {
             startService(new Intent(intent).setAction(NEXT_WORD));
@@ -111,7 +114,7 @@ public class WordService extends IntentService {
     }
 
     private void updateWidget(RemoteViews views) {
-        AppWidgetManager.getInstance(this).updateAppWidget(mWidgetComponentName, views);
+        mWidgetManager.updateAppWidget(mWidgetComponentName, views);
     }
 
     public int getId() {

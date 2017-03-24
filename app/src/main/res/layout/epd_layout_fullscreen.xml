@@ -19,8 +19,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:rotation="90"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:rotation="90">
 
     <TextView
         android:id="@+id/text_word"
@@ -31,11 +31,13 @@
         android:layout_marginStart="@dimen/padding"
         android:lines="1"
         android:textAlignment="center"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/text_word"/>
 
     <TextView
         android:id="@+id/text_explanation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
         android:textSize="@dimen/text_explanation"/>
 </LinearLayout>
