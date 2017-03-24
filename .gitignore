@@ -1,0 +1,17 @@
+*.iml
+.gradle
+/local.properties
+.DS_Store
+/build
+/captures
+.idea/
+/gradle.properties
+/gradlew
+/gradlew.bat
+gradle/
+/app/build/
+/gradle/wrapper/
+/build/*
+*.db
+*.swp
+tags
