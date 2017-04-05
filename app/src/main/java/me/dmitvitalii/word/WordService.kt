@@ -20,16 +20,14 @@ import android.app.IntentService
 import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.content.Intent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.IBinder
 import android.os.SystemClock
 import android.widget.RemoteViews
-
-import com.yotadevices.sdk.EpdConstants.EpdLauncherConstants.OPTION_WIDGET_THEME
-import com.yotadevices.sdk.EpdConstants.EpdLauncherConstants.WIDGET_THEME_BLACK
-import com.yotadevices.sdk.EpdConstants.EpdLauncherConstants.WIDGET_THEME_WHITE
+import com.yotadevices.sdk.EpdConstants.EpdLauncherConstants.*
+import me.dmitvitalii.word.WordService.Companion.TAG
 
 /**
  * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -38,12 +36,12 @@ import com.yotadevices.sdk.EpdConstants.EpdLauncherConstants.WIDGET_THEME_WHITE
  * @author Vitalii Dmitriev
  * @since 04.04.2017
  */
-class WordService : IntentService(WordService.TAG) {
+open class WordService : IntentService(WordService.TAG) {
     private var mWords: Array<String> = resources.getStringArray(R.array.words)
     private var mWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
 
-    private var mWidgetComponentName: ComponentName? = null
-    private var mExplanations: Array<String>? = null
+    private var mWidgetName: ComponentName = ComponentName(packageName, EpdWidget::class.simpleName)
+    private var mExplanations: Array<String> = resources.getStringArray(R.array.meanings)
 
     /**
      * Returns a color for active elements. Example: if the first button was pressed, it either
@@ -54,7 +52,7 @@ class WordService : IntentService(WordService.TAG) {
      */
     private val activeElementColor: Int
         get() {
-            val id = mWidgetManager.getAppWidgetIds(mWidgetComponentName)[0]
+            val id = mWidgetManager.getAppWidgetIds(mWidgetName)[0]
             val isWhiteTheme = mWidgetManager.getAppWidgetOptions(id)
                     .getInt(OPTION_WIDGET_THEME, WIDGET_THEME_BLACK) == WIDGET_THEME_WHITE
             return if (isWhiteTheme) Color.BLACK else Color.WHITE
@@ -66,49 +64,43 @@ class WordService : IntentService(WordService.TAG) {
 
     override fun onCreate() {
         super.onCreate()
-
-        mExplanations = resources.getStringArray(R.array.meanings)
-        mWidgetComponentName = ComponentName(packageName, EpdWidget::class.simpleName)
         val intent = Intent(this, WordService::class.java)
         intent.action = NEXT_WORD
-        val pendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
         val manager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         manager.setInexactRepeating(
                 AlarmManager.ELAPSED_REALTIME_WAKEUP,
                 SystemClock.elapsedRealtime(),
                 AlarmManager.INTERVAL_DAY,
-                pendingIntent
+                PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         )
     }
 
-    public override fun onHandleIntent(intent: Intent?) {
+    override fun onHandleIntent(intent: Intent?) {
         val action = when (intent) {
             null -> ""
             else -> intent.action
         }
         if (NEXT_WORD == action) {
             val widget = RemoteViews(packageName, R.layout.epd_layout_fullscreen)
-            var stringId = id
-            if (mWords.size >= stringId) {
-                stringId = FIRST.toInt()
-            }
+            val stringId = if (mWords.size >= id) FIRST else id
             saveNextId(stringId)
             widget.setTextViewText(R.id.text_word, mWords[stringId])
             widget.setTextColor(R.id.text_word, activeElementColor)
-            widget.setTextViewText(R.id.text_explanation, mExplanations!![stringId])
+            widget.setTextViewText(R.id.text_explanation, mExplanations[stringId])
             widget.setTextColor(R.id.text_explanation, activeElementColor)
             updateWidget(widget)
-        } else if (id == FIRST.toInt()) {
+        } else if (id == FIRST) {
             startService(Intent(intent).setAction(NEXT_WORD))
         }
     }
 
     private fun updateWidget(views: RemoteViews) {
-        mWidgetManager.updateAppWidget(mWidgetComponentName, views)
+        mWidgetManager.updateAppWidget(mWidgetName, views)
     }
 
     val id: Int
-        get() = getSharedPreferences(packageName + TAG, Context.MODE_PRIVATE).getInt(NEXT_WORD, FIRST.toInt())
+        get() = getSharedPreferences(packageName + TAG, Context.MODE_PRIVATE).getInt(NEXT_WORD, FIRST)
 
     private fun saveNextId(id: Int) {
         getSharedPreferences(packageName + TAG, Context.MODE_PRIVATE)
@@ -123,7 +115,7 @@ class WordService : IntentService(WordService.TAG) {
 
     companion object {
         val NEXT_WORD = "change"
-        private val TAG = WordService::class.simpleName
-        private val FIRST: Byte = 0
+        val TAG = WordService::class.simpleName
+        val FIRST = 0
     }
 }

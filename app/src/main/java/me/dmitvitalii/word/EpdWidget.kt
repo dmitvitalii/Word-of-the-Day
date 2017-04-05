@@ -38,9 +38,7 @@ class EpdWidget : AppWidgetProvider() {
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        var intent = intent
-        intent = Intent(intent).setClass(context, WordService::class.java)
-        context.startService(intent)
+        context.startService(Intent(intent).setClass(context, WordService::class.java))
         super.onReceive(context, intent)
     }
 }
