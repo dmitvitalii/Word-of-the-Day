@@ -37,11 +37,10 @@ import me.dmitvitalii.word.WordService.Companion.TAG
  * @since 04.04.2017
  */
 open class WordService : IntentService(WordService.TAG) {
-    private var mWords: Array<String> = resources.getStringArray(R.array.words)
-    private var mWidgetManager: AppWidgetManager = AppWidgetManager.getInstance(this)
-
-    private var mWidgetName: ComponentName = ComponentName(packageName, EpdWidget::class.simpleName)
-    private var mExplanations: Array<String> = resources.getStringArray(R.array.meanings)
+    lateinit private var mWords: Array<String>
+    lateinit private var mExplanations: Array<String>
+    lateinit private var mWidgetName: ComponentName
+    lateinit private var mWidgetManager: AppWidgetManager
 
     /**
      * Returns a color for active elements. Example: if the first button was pressed, it either
@@ -64,6 +63,10 @@ open class WordService : IntentService(WordService.TAG) {
 
     override fun onCreate() {
         super.onCreate()
+        mWords = resources.getStringArray(R.array.words)
+        mWidgetManager = AppWidgetManager.getInstance(this)
+        mWidgetName = ComponentName(packageName, EpdWidget::class.simpleName)
+        mExplanations = resources.getStringArray(R.array.meanings)
         val intent = Intent(this, WordService::class.java)
         intent.action = NEXT_WORD
 
