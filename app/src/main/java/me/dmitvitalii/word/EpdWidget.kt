@@ -21,8 +21,9 @@ import android.content.Context
 import android.content.Intent
 
 /**
+ * The main EPD widget.
+ *
  * @author Vitalii Dmitriev
- * *
  * @since 04.04.2017
  */
 class EpdWidget : AppWidgetProvider() {
