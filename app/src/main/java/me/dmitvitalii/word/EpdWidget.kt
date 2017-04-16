@@ -27,9 +27,9 @@ import android.content.Intent
  */
 class EpdWidget : AppWidgetProvider() {
 
-    override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+    override fun onUpdate(context: Context, widgetManager: AppWidgetManager, widgetIds: IntArray) {
         context.startService(Intent(context, WordService::class.java))
-        super.onUpdate(context, appWidgetManager, appWidgetIds)
+        super.onUpdate(context, widgetManager, widgetIds)
     }
 
     override fun onDisabled(context: Context) {
