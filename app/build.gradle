@@ -19,7 +19,7 @@ apply plugin: 'kotlin-android'
 android {
 
     compileSdkVersion 25
-    buildToolsVersion "25.0.1"
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "me.dmitvitalii.word"
@@ -50,7 +50,5 @@ android {
 
 dependencies {
     provided 'com.yotadevices.libs.internal:sdk:3.7.14'
-    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlinVersion"
-    compile "org.jetbrains.kotlin:kotlin-reflect:in-stdlib-jre7"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
 }
