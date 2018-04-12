@@ -50,5 +50,6 @@ android {
 
 dependencies {
     provided 'com.yotadevices.libs.internal:sdk:3.7.14'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation 'com.github.heyalex:widgetupdatehelper:1.1'
 }
